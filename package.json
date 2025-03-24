@@ -16,6 +16,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@privy-io/react-auth": "^2.6.1",
+    "@privy-io/server-auth": "^1.18.11",
+    "@privy-io/wagmi": "^1.0.3",
+    "@reservoir0x/relay-kit-hooks": "^1.6.1",
+    "@reservoir0x/relay-sdk": "^1.6.11",
     "@t3-oss/env-nextjs": "^0.12.0",
     "@tanstack/react-query": "^5.69.0",
     "@trpc/client": "^11.0.0",
@@ -26,6 +31,8 @@
     "react-dom": "^19.0.0",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
+    "viem": "^2.23.6",
+    "wagmi": "^2.14.12",
     "zod": "^3.24.2"
   },
   "devDependencies": {
