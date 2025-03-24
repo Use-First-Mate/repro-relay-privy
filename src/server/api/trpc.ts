@@ -9,6 +9,14 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { PrivyClient } from '@privy-io/server-auth'
+import { env } from "~/env";
+import { createClient, LogLevel } from '@reservoir0x/relay-sdk'
+
+const privy = new PrivyClient(
+  env.NEXT_PUBLIC_PRIVY_APP_ID,
+  env.PRIVY_APP_SECRET,
+)
 
 /**
  * 1. CONTEXT
@@ -23,7 +31,14 @@ import { ZodError } from "zod";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const relayClient = createClient({
+    baseApiUrl: 'https://api.relay.link',
+    logLevel: LogLevel.Verbose,
+  })
+
   return {
+    privy,
+    relayClient,
     ...opts,
   };
 };
