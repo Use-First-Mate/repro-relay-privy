@@ -1,3 +1,5 @@
+Issue with bridging ETH from Base to Ethereum network, using reservoir relay and privy smart wallets. Attempting to transfer ETH from privy smart wallet (Base) -> external wallet (Ethereum)
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
