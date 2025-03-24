@@ -1,9 +1,14 @@
 import "~/styles/globals.css";
-
+import { PrivyProvider } from '@privy-io/react-auth'
+import { WagmiProvider, createConfig } from '@privy-io/wagmi'
+import { http } from 'wagmi'
+import { base } from 'wagmi/chains'
+import { SmartWalletsProvider } from '@privy-io/react-auth/smart-wallets'
+import { env } from '~/env'
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-
 import { TRPCReactProvider } from "~/trpc/react";
+import { getRPCUrl } from "~/utils/getRPCUrl";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -15,6 +20,17 @@ const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist-sans",
 });
+const wagmiConfig = createConfig({
+  chains: [base],
+  transports: {
+    [base.id]: http(getRPCUrl(base.id)),
+  },
+})
+declare module 'wagmi' {
+  interface Register {
+    config: typeof wagmiConfig;
+  }
+}
 
 export default function RootLayout({
   children,
@@ -22,7 +38,24 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <PrivyProvider
+          appId={env.NEXT_PUBLIC_PRIVY_APP_ID}
+          config={{
+            defaultChain: base,
+            supportedChains: [base],
+            loginMethods: ['email'],
+
+            embeddedWallets: {
+              createOnLogin: 'all-users',
+            },
+          }}
+        > 
+          <SmartWalletsProvider>
+            <TRPCReactProvider>
+              <WagmiProvider config={wagmiConfig}>{children}</WagmiProvider>
+            </TRPCReactProvider>  
+          </SmartWalletsProvider>
+        </PrivyProvider>
       </body>
     </html>
   );
