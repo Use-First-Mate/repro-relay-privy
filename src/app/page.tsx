@@ -1,53 +1,45 @@
-import Link from "next/link";
+'use client'
 
-import { LatestPost } from "~/app/_components/post";
-import { api, HydrateClient } from "~/trpc/server";
+import {usePrivy, useLogin} from '@privy-io/react-auth';
+import { useSmartWallets } from "@privy-io/react-auth/smart-wallets"
+import {useState} from 'react';
+import { parseUnits } from 'viem';
 
-export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
+export default function Home() {
+  const {ready, authenticated, user} = usePrivy();
+  const { login } = useLogin();
+  const [amountWei, setAmountWei] = useState<bigint | undefined>(undefined)
 
-  void api.post.getLatest.prefetch();
+  if (!ready || !authenticated) {
+    return (
+      <button onClick={login}>
+        Log in
+      </button>
+    )
+  }
 
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
+    <main className="flex min-h-screen flex-col gap-4">
+      <h1 className="text-2xl font-bold text-center">ETH Transfer</h1>
+      <div className="text-center flex flex-col">
+        <p>Privy Smart Wallet Address: {user?.smartWallet?.address}</p>
+        <p>Privy Embedded Wallet Address: {user?.wallet?.address}</p>
+        <p>Privy Id: {user?.id}</p>
+      </div>
+      <div className="flex gap-4 w-3/4 p-10 self-center justify-center items-center">
+        <div className="flex flex-col gap-4 w-1/2">
+          <input type="text" placeholder="Amount ETH" className="w-full rounded-lg border border-gray-300 p-4" onChange={(e) => setAmountWei(parseUnits(e.target.value, 18))} />
+          Amount Wei: {amountWei?.toString()}
+          <div className="w-auto flex flex-col items-center justify-center rounded-lg border bg-green-200 border-gray-300 p-4 cursor-pointer">
+            Deposit ETH
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-          </div>
-
-          <LatestPost />
         </div>
-      </main>
-    </HydrateClient>
+        <div className="flex flex-col gap-4 w-1/2">
+          <div className="w-auto flex flex-col items-center justify-center rounded-lg border bg-red-200 border-gray-300 p-4 cursor-pointer">
+            Withdraw ETH
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
