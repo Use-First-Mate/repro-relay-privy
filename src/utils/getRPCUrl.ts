@@ -6,7 +6,6 @@ const nftPoolChains = [base] as const
 const rpcUrls = new Map<number, string>([
   [8453, 'https://base-mainnet.g.alchemy.com/v2'],
   [84532, 'https://base-sepolia.g.alchemy.com/v2'],
-  [42161, 'https://arb-mainnet.g.alchemy.com/v2'],
 ])
 
 export function getRPCUrl(chainId: number) {

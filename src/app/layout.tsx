@@ -26,7 +26,7 @@ declare module 'wagmi' {
 function RootLayout({children,}: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="h-screen w-screen">
         <PrivyProvider
           appId={env.NEXT_PUBLIC_PRIVY_APP_ID}
           config={{

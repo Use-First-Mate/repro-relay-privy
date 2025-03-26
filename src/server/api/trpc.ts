@@ -12,6 +12,9 @@ import { ZodError } from "zod";
 import { PrivyClient } from '@privy-io/server-auth'
 import { env } from "~/env";
 import { createClient, LogLevel } from '@reservoir0x/relay-sdk'
+import { createPublicClient, http } from 'viem'
+import { base } from 'wagmi/chains'
+import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
 
 const privy = new PrivyClient(
   env.NEXT_PUBLIC_PRIVY_APP_ID,
@@ -30,7 +33,21 @@ const privy = new PrivyClient(
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
+  const authToken = _opts.req.headers.authorization?.replace('Bearer ', '')
+  let userClaim: string | undefined
+  if (authToken) {
+    try {
+      userClaim = (await privy.verifyAuthToken(authToken))?.userId
+    } catch (_e) {
+      // expected in non prtected methods
+      console.log("privy auth error", _e)
+    }
+  }
+  const publicClient = createPublicClient({
+    chain: base,
+    transport: http(env.BASE_RPC_URL),
+  })
   const relayClient = createClient({
     baseApiUrl: 'https://api.relay.link',
     logLevel: LogLevel.Verbose,
@@ -39,7 +56,8 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   return {
     privy,
     relayClient,
-    ...opts,
+    publicClient,
+    userClaim,
   };
 };
 

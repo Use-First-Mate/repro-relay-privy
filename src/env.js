@@ -9,6 +9,7 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
     PRIVY_APP_SECRET: z.string(),
+    BASE_RPC_URL: z.string(),
   },
 
   /**
@@ -31,6 +32,7 @@ export const env = createEnv({
     NEXT_PUBLIC_ALCHEMY_API_KEY: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
     NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,
     PRIVY_APP_SECRET: process.env.PRIVY_APP_SECRET,
+    BASE_RPC_URL: process.env.BASE_RPC_URL,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
