@@ -16,9 +16,11 @@ To run this project, you need to have the following environment variables set:
 Deposit from Ethereum to Base:
 1. Enter an amount to deposit.
 2. Click the "Get Deposit Address" button.
-3. Copy the deposit address and send ETH from Ethereum to it.
+3. Copy the deposit address and send ETH from Ethereum network to it.
 4. Refresh wallet balance to see the ETH added to your balance.
 
 Withdraw from Base to Ethereum:
-1. Enter an withdrawal address.
+1. Enter an withdrawal address for receiving ETH on the Ethereum network.
 2. Click the "Withdraw ETH" button.
+3. The transaction will be sent from your Privy smart wallet on the Base network to the withdrawal address on the Ethereum network.
+4. Refresh wallet balance to see the ETH withdrawn from your balance.

@@ -10,7 +10,6 @@ export const transferRouter = createTRPCRouter({
       smartWalletAddress: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
-      console.log(input.amountWei)
       const quoteParams = { 
         tradeType: 'EXACT_INPUT',
         amount: input.amountWei.toString(),
@@ -35,5 +34,36 @@ export const transferRouter = createTRPCRouter({
         requestId,
         depositAddress,
       };
+    }),
+  ethBaseToMainnetQuote: publicProcedure
+    .input(z.object({
+      amountWei: z.bigint(),
+      smartWalletAddress: z.string(),
+      toAddress: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const quoteParams = { 
+        tradeType: "EXACT_INPUT",
+        amount: input.amountWei.toString(),
+        recipient: input.toAddress,
+        chainId: 8453,
+        toChainId: 1,
+        currency: zeroAddress,
+        toCurrency: zeroAddress,
+        options: {
+          user: input.smartWalletAddress,
+          useDepositAddress: false,
+          refundTo: input.smartWalletAddress,
+          userOperationGasOverhead: 300000, // hardcoded for now
+        }
+      } as GetQuoteParameters
+      const quote = await ctx.relayClient.actions.getQuote(quoteParams)
+      const requestId = quote.steps[0]?.requestId
+      console.log({quote})
+      console.log({requestId})
+      return {
+        quote,
+        requestId,
+      }
     }),
 });
